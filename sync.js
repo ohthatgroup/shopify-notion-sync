@@ -55,22 +55,38 @@ async function shopifyAPICall(endpoint, params = {}) {
 async function getAllProducts() {
   console.log('Fetching products from Shopify...');
   let allProducts = [];
-  let pageInfo = null;
+  let nextPageUrl = '/products.json?limit=250';
   
-  do {
-    const params = { limit: 250 };
-    if (pageInfo) params.page_info = pageInfo;
-    
-    const data = await shopifyAPICall('/products.json', params);
-    allProducts = allProducts.concat(data.products);
-    
-    // Check for next page (you might need to parse Link header)
-    pageInfo = null; // Will be set if there's a next page
-    
-    await delay(500); // Be nice to the API
-  } while (pageInfo);
+  while (nextPageUrl) {
+    try {
+      const response = await shopifyAPI.get(nextPageUrl);
+      const data = response.data;
+      allProducts = allProducts.concat(data.products);
+      
+      console.log(`Fetched ${allProducts.length} products so far...`);
+      
+      // Check for next page in Link header
+      const linkHeader = response.headers.link;
+      nextPageUrl = null;
+      
+      if (linkHeader) {
+        const matches = linkHeader.match(/<([^>]+)>; rel="next"/);
+        if (matches) {
+          // Extract just the path from the full URL
+          const fullUrl = matches[1];
+          const url = new URL(fullUrl);
+          nextPageUrl = url.pathname + url.search;
+        }
+      }
+      
+      await delay(500); // Be nice to the API
+    } catch (error) {
+      console.error('Error fetching products:', error.message);
+      throw error;
+    }
+  }
   
-  console.log(`Fetched ${allProducts.length} products`);
+  console.log(`Fetched ${allProducts.length} products in total`);
   return allProducts;
 }
 
@@ -106,25 +122,38 @@ async function getRecentOrders() {
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
   
   let allOrders = [];
-  let pageInfo = null;
+  let nextPageUrl = `/orders.json?limit=250&status=any&created_at_min=${thirtyDaysAgo.toISOString()}`;
   
-  do {
-    const params = {
-      limit: 250,
-      status: 'any',
-      created_at_min: thirtyDaysAgo.toISOString()
-    };
-    if (pageInfo) params.page_info = pageInfo;
-    
-    const data = await shopifyAPICall('/orders.json', params);
-    allOrders = allOrders.concat(data.orders);
-    
-    pageInfo = null; // Will be set if there's a next page
-    
-    await delay(500);
-  } while (pageInfo);
+  while (nextPageUrl) {
+    try {
+      const response = await shopifyAPI.get(nextPageUrl);
+      const data = response.data;
+      allOrders = allOrders.concat(data.orders);
+      
+      console.log(`Fetched ${allOrders.length} orders so far...`);
+      
+      // Check for next page in Link header
+      const linkHeader = response.headers.link;
+      nextPageUrl = null;
+      
+      if (linkHeader) {
+        const matches = linkHeader.match(/<([^>]+)>; rel="next"/);
+        if (matches) {
+          // Extract just the path from the full URL
+          const fullUrl = matches[1];
+          const url = new URL(fullUrl);
+          nextPageUrl = url.pathname + url.search;
+        }
+      }
+      
+      await delay(500);
+    } catch (error) {
+      console.error('Error fetching orders:', error.message);
+      throw error;
+    }
+  }
   
-  console.log(`Fetched ${allOrders.length} orders`);
+  console.log(`Fetched ${allOrders.length} orders in total`);
   return allOrders;
 }
 
