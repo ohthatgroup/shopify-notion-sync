@@ -1,0 +1,15 @@
+{
+  "name": "shopify-notion-sync",
+  "version": "1.0.0",
+  "description": "Automated sync between Shopify and Notion",
+  "main": "sync.js",
+  "scripts": {
+    "sync": "node sync.js"
+  },
+  "dependencies": {
+    "@notionhq/client": "^2.2.14",
+    "axios": "^1.6.5",
+    "date-fns": "^3.0.6",
+    "date-fns-tz": "^2.0.0"
+  }
+}
