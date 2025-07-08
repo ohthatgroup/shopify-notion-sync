@@ -72,10 +72,11 @@ async function getAllProducts() {
       if (linkHeader) {
         const matches = linkHeader.match(/<([^>]+)>; rel="next"/);
         if (matches) {
-          // Extract just the path from the full URL
+          // Extract just the path and query from the full URL
           const fullUrl = matches[1];
           const url = new URL(fullUrl);
-          nextPageUrl = url.pathname + url.search;
+          // Remove the /admin/api/2024-10 prefix if it exists
+          nextPageUrl = url.pathname.replace(/^\/admin\/api\/\d{4}-\d{2}/, '') + url.search;
         }
       }
       
@@ -139,10 +140,11 @@ async function getRecentOrders() {
       if (linkHeader) {
         const matches = linkHeader.match(/<([^>]+)>; rel="next"/);
         if (matches) {
-          // Extract just the path from the full URL
+          // Extract just the path and query from the full URL
           const fullUrl = matches[1];
           const url = new URL(fullUrl);
-          nextPageUrl = url.pathname + url.search;
+          // Remove the /admin/api/2024-10 prefix if it exists
+          nextPageUrl = url.pathname.replace(/^\/admin\/api\/\d{4}-\d{2}/, '') + url.search;
         }
       }
       
