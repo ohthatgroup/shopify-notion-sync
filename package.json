@@ -9,7 +9,7 @@
   "dependencies": {
     "@notionhq/client": "^2.2.14",
     "axios": "^1.6.5",
-    "date-fns": "^3.0.6",
+    "date-fns": "^2.30.0",
     "date-fns-tz": "^2.0.0"
   }
 }
