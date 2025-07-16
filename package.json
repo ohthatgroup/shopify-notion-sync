@@ -1,15 +1,18 @@
 {
   "name": "shopify-notion-sync",
-  "version": "1.0.0",
-  "description": "Automated sync between Shopify and Notion",
-  "main": "sync.js",
+  "version": "2.0.0",
+  "description": "GraphQL-powered Shopify-Notion sync with keyword search",
+  "main": "sync-graphql.js",
   "scripts": {
-    "sync": "node sync.js"
+    "sync": "node sync-graphql.js",
+    "search": "node search.js",
+    "sync-legacy": "node sync.js"
   },
   "dependencies": {
     "@notionhq/client": "^2.2.14",
     "axios": "^1.6.5",
     "date-fns": "^2.30.0",
-    "date-fns-tz": "^2.0.0"
+    "date-fns-tz": "^2.0.0",
+    "dotenv": "^16.3.1"
   }
 }
