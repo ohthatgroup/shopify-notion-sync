@@ -112,16 +112,6 @@ async function fetchAllProducts() {
                   inventoryItem {
                     id
                     tracked
-                    inventoryLevels(first: 10) {
-                      edges {
-                        node {
-                          available
-                          location {
-                            name
-                          }
-                        }
-                      }
-                    }
                   }
                 }
               }
@@ -187,16 +177,13 @@ async function findNotionProduct(shopifyProductId) {
   }
 }
 
-// Calculate total inventory across all locations
+// Calculate total inventory across all variants
 function calculateTotalInventory(variants) {
   let totalInventory = 0;
   
   variants.edges.forEach(({ node: variant }) => {
-    if (variant.inventoryItem && variant.inventoryItem.inventoryLevels) {
-      variant.inventoryItem.inventoryLevels.edges.forEach(({ node: level }) => {
-        totalInventory += level.available || 0;
-      });
-    }
+    // Use inventoryQuantity directly from the variant
+    totalInventory += variant.inventoryQuantity || 0;
   });
   
   return totalInventory;
